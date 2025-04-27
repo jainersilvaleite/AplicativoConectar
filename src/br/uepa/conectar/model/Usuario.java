@@ -1,9 +1,13 @@
 package br.uepa.conectar.model;
 
+import br.uepa.conectar.util.Consultavel;
+
+import java.lang.module.FindException;
 import java.time.LocalDate;
+import java.util.List;
 import java.util.Scanner;
 
-public class Usuario {
+public class Usuario implements Consultavel {
     private int id;
     private String nome;
     private String email;
@@ -12,6 +16,11 @@ public class Usuario {
     private String endereco;
     private LocalDate dataNascimento;
     private Boolean isAutenticado;
+
+    // define o usuário como não autenticado por padrão
+    public Usuario() {
+        this.isAutenticado = false;
+    }
 
     public int getId() {
         return id;
@@ -35,10 +44,6 @@ public class Usuario {
 
     public void setEmail(String email) {
         this.email = email;
-    }
-
-    public String getSenha() {
-        return senha;
     }
 
     public void setSenha(String senha) {
@@ -77,16 +82,16 @@ public class Usuario {
         this.isAutenticado = isAutenticado;
     }
 
-    public void fazerLogin(String senha) {
+    public void fazerLogin(String senhaInformada) {
         // compara a senha salva pelo usuário com a senha informada para validação do login
-        if (senha.equals(getSenha())) {
+        if (senhaInformada.equals(senha)) {
             setIsAutenticado(true);
         } else {
             setIsAutenticado(false);
         }
     }
 
-    public void preencherDadosDePerfil() {
+    public void preencherDadosDePerfil(List<Usuario> usuarios) {
         boolean cadastroCompleto = false; // verifica se o cadastro foi terminado
         Scanner entradaInformacao = new Scanner(System.in); // armazena a entrada de informação do usuário
         String informacao; // preenchimento da informação do usuário para cadastro
@@ -105,6 +110,10 @@ public class Usuario {
                 System.out.print("Seu email: ");
                 informacao = entradaInformacao.nextLine(); // preenchimento do email do usuário
                 setEmail(informacao);
+
+                if (consultarUsuarioPorEmail(usuarios, email) != null) {
+                    throw new FindException("O e-mail informado já existe!");
+                }
 
                 System.out.print("Sua senha: ");
                 informacao = entradaInformacao.nextLine(); // preenchimento da senha do usuário
@@ -127,6 +136,7 @@ public class Usuario {
                 cadastroCompleto = true;
             } catch (Exception e) {
                 System.out.println("[ERRO] Ocorreu um erro ao realizar o cadastro: " + e.getMessage());
+                System.out.println("Tente utilizar o formato ANO-MÊS(zero incluso)-DIA.");
                 System.out.println("Reiniciando o preenchimento de dados...");
                 System.out.println();
             }
@@ -139,7 +149,14 @@ public class Usuario {
     }
 
     public void exibirDetalhes() {
-
+        System.out.println();
+        System.out.println("Detalhes da sua conta:");
+        System.out.println("------------------------------------");
+        System.out.println("Nome: " + getNome());
+        System.out.println("E-mail: " + getEmail());
+        System.out.println("Telefone: " + getTelefone());
+        System.out.println("Endereço: " + getEndereco());
+        System.out.println("Nascimento: " + getDataNascimento().toString());
     }
 
     public void visualizarPropostas() {
@@ -157,6 +174,7 @@ public class Usuario {
     public void encerrarLogin() {
         System.out.println();
         System.out.println("Encerrando sessão...");
+        System.out.println();
         setIsAutenticado(false);
     }
 }
