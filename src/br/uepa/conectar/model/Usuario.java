@@ -4,6 +4,7 @@ import br.uepa.conectar.util.Consultavel;
 
 import java.lang.module.FindException;
 import java.time.LocalDate;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Scanner;
 
@@ -16,10 +17,12 @@ public class Usuario implements Consultavel {
     private String endereco;
     private LocalDate dataNascimento;
     private Boolean isAutenticado;
+    private List<Usuario> perfis;
 
-    // define o usuário como não autenticado por padrão
+    // define o usuário como não autenticado e sem perfis por padrão
     public Usuario() {
         this.isAutenticado = false;
+        this.perfis = new ArrayList<>();
     }
 
     public int getId() {
@@ -82,12 +85,24 @@ public class Usuario implements Consultavel {
         this.isAutenticado = isAutenticado;
     }
 
+    public List<Usuario> getPerfis() {
+        return perfis;
+    }
+
     public void fazerLogin(String senhaInformada) {
         // compara a senha salva pelo usuário com a senha informada para validação do login
         if (senhaInformada.equals(senha)) {
             setIsAutenticado(true);
+            // atualiza a informação para todos os perfis que o usuário possua
+            for (Usuario perfil: perfis) {
+                perfil.setIsAutenticado(true);
+            }
         } else {
             setIsAutenticado(false);
+            // atualiza a informação para todos os perfis que o usuário possua
+            for (Usuario perfil: perfis) {
+                perfil.setIsAutenticado(false);
+            }
         }
     }
 
@@ -133,6 +148,9 @@ public class Usuario implements Consultavel {
 
                 System.out.println("Cadastro realizado com sucesso!");
                 System.out.println();
+
+                getPerfis().add(new Cliente(this)); // gera um perfil de cliente para o usuário recém-criado
+                getPerfis().add(new Prestador(this)); // gera um perfil de prestador para o usuário recém-criado
                 cadastroCompleto = true;
             } catch (Exception e) {
                 System.out.println("[ERRO] Ocorreu um erro ao realizar o cadastro: " + e.getMessage());
@@ -144,8 +162,98 @@ public class Usuario implements Consultavel {
 
     }
 
-    public void escolherPerfil() {
+    public Usuario escolherPerfil() {
+        boolean escolhaDePerfilCompleta = false; // verifica se a escolha do perfil foi terminada
+        Usuario perfilSelecionado = new Usuario(); // armazena o perfil selecionado pelo usuário
+        Scanner entradaOpcao = new Scanner(System.in); // possibilita a entrada do usuário com alguma das opções
+        Scanner entradaTexto = new Scanner(System.in); // possibilita a entrada com informações de texto solicitadas
+        int opcao; // armazena a opção inserida pelo usuário recentemente
+        String texto; // armazena a informação de texto solicitada recentemente
 
+        System.out.println();
+        System.out.println("Com qual perfil deseja acessar o aplicativo?");
+        System.out.println("------------------------------------------------");
+
+        while (!escolhaDePerfilCompleta) {
+            System.out.println("1 - Cliente.");
+            System.out.println("2 - Prestador.");
+            if (getId() == 1) System.out.println("3 - Administrador.");
+            System.out.println();
+            System.out.print("Sua opção: ");
+            opcao = entradaOpcao.nextInt();
+
+            // retorna o perfil selecionado pelo usuário para acessar o aplicativo
+            switch (opcao) {
+                // caso o usuário selecione o perfil de Cliente, ele deve informar seu cpf, se não tiver
+                case 1:
+                    Cliente cliente = (Cliente) getPerfis().getFirst();
+
+                    // caso possua cpf
+                    if (!cliente.getCpf().equals("Não informado.")) {
+                        System.out.println();
+                        System.out.println("Você selecionou o perfil de Cliente. Redirecionando...");
+                        perfilSelecionado = cliente;
+                        escolhaDePerfilCompleta = true;
+                        break;
+                    }
+
+                    // caso não possua cpf
+                    System.out.println();
+                    System.out.print("Para prosseguir, insira seu CPF: ");
+                    texto = entradaTexto.nextLine();
+
+                    cliente.setCpf(texto);
+                    getPerfis().set(0, cliente);
+                    System.out.println("Você selecionou o perfil de Cliente. Redirecionando...");
+                    perfilSelecionado = cliente;
+                    escolhaDePerfilCompleta = true;
+                    break;
+                // caso o usuário selecione o perfil de Prestador, ele deve informar seu cnpj e formações, se não tiver
+                case 2:
+                    Prestador prestador = (Prestador) getPerfis().get(1);
+
+                    // caso não possua cnpj
+                    if (prestador.getCnpj().equals("Não informado.")) {
+                        System.out.println();
+                        System.out.print("Para prosseguir, insira seu CPF/CNPJ: ");
+                        texto = entradaTexto.nextLine();
+
+                        prestador.setCnpj(texto);
+                    }
+
+                    // caso não possua formações
+                    if (prestador.getFormacoes().equals("Não informado.")) {
+                        System.out.println();
+                        System.out.print("Para prosseguir, insira suas formações: ");
+                        texto = entradaTexto.nextLine();
+
+                        prestador.setFormacoes(texto);
+                    }
+
+                    getPerfis().set(1, prestador);
+                    System.out.println("Você selecionou o perfil de Prestador. Redirecionando...");
+                    perfilSelecionado = prestador;
+                    escolhaDePerfilCompleta = true;
+                    break;
+                case 3:
+                    if (getId() == 1) {
+                        System.out.println("Você selecionou o perfil de Administrador. Redirecionando...");
+                        perfilSelecionado = getPerfis().getLast();
+                        escolhaDePerfilCompleta = true;
+                        break;
+                    } else {
+                        System.out.println("[ERRO] Opção inválida, selecione uma das opções disponíveis!");
+                        System.out.println();
+                        break;
+                    }
+                default:
+                    System.out.println("[ERRO] Opção inválida, selecione uma das opções disponíveis!");
+                    System.out.println();
+                    break;
+            }
+        }
+
+        return perfilSelecionado;
     }
 
     public void exibirDetalhes() {
@@ -176,5 +284,9 @@ public class Usuario implements Consultavel {
         System.out.println("Encerrando sessão...");
         System.out.println();
         setIsAutenticado(false);
+        // atualiza a informação para todos os perfis que o usuário possua
+        for (Usuario perfil: perfis) {
+            perfil.setIsAutenticado(false);
+        }
     }
 }

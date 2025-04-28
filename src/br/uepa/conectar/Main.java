@@ -1,9 +1,8 @@
 package br.uepa.conectar;
 
-import br.uepa.conectar.model.Proposta;
-import br.uepa.conectar.model.Servico;
-import br.uepa.conectar.model.Usuario;
+import br.uepa.conectar.model.*;
 
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Scanner;
@@ -15,13 +14,30 @@ public class Main {
         List<Servico> servicos = new ArrayList<>(); // armazena todos os serviços do aplicativo
         List<Proposta> propostas = new ArrayList<>(); // armazena todas as propostas do aplicativo
 
+        // criação do usuário Administrador
+        Usuario usuarioAdministrador = new Usuario();
+        usuarioAdministrador.setId(1); // id do usuario com privilégios de administrador
+        usuarioAdministrador.setNome("Administrador"); // nome do usuario com privilégios de administrador
+        usuarioAdministrador.setEmail("conectar.adm@gmail.com"); // email do usuario com privilégios de administrador
+        usuarioAdministrador.setSenha(".adm123@"); // senha do usuario com privilégios de administrador
+        usuarioAdministrador.setTelefone("99999999999"); // telefone do usuario com privilégios de administrador
+        usuarioAdministrador.setEndereco("Avenida das Empresas, 999"); // endereço do administrador
+        usuarioAdministrador.setDataNascimento(LocalDate.now()); // data de nascimento provisória do administrador
+
+        usuarioAdministrador.getPerfis().add(new Cliente(usuarioAdministrador)); // geração do perfil de cliente
+        usuarioAdministrador.getPerfis().add(new Prestador(usuarioAdministrador)); // geração do perfil de prestador
+        usuarioAdministrador.getPerfis().add(new Administrador(usuarioAdministrador)); // geração do perfil de adm
+
+        usuarios.add(usuarioAdministrador);
+
         // variáveis de controle
         boolean aplicativoAtivo = true; // mantém o aplicativo ativo até que o usuário queira encerrá-lo
         Usuario usuarioLogado = new Usuario(); // armazena o usuário logado atualmente no aplicativo
+        Usuario perfilSelecionado = new Usuario(); // armazena o perfil selecionado pelo usuário
         Scanner entradaOpcao = new Scanner(System.in); // possibilita a entrada do usuário com alguma das opções
         Scanner entradaTexto = new Scanner(System.in); // possibilita a entrada com informações de texto solicitadas
         boolean autenticacaoCompleta = false; // verifica se a autenticação foi terminada para enviá-lo a tela principal
-        int idContador = 0; // utilizado para geração dos ids dos usuários
+        int idContador = 2; // utilizado para geração dos ids dos usuários
         int opcao; // armazena a opção inserida pelo usuário recentemente
         String texto; // armazena a informação de texto solicitada recentemente
 
@@ -46,6 +62,7 @@ public class Main {
                         usuarios.add(novoUsuario); // novo usuário é inserido no "banco de dados"
                         idContador++; // incremento do contador para geração dos ids de usuários
                         break;
+                    // caso o usuário queira logar com sua conta, ele precisará informar e-mail e senha
                     case 2:
                         Usuario usuario = new Usuario(); // instância do usuário a fazer login
                         System.out.println();
@@ -78,6 +95,7 @@ public class Main {
                         usuarioLogado = usuario;
                         autenticacaoCompleta = true;
                         break;
+                    // caso o usuário queira encerrar o aplicativo
                     case 3:
                         System.out.println();
                         System.out.println("Obrigado por utilizar nosso aplicativo! Encerrando...");
@@ -86,12 +104,27 @@ public class Main {
                     default:
                         System.out.println("[ERRO] Opção inválida, selecione uma das opções disponíveis!");
                         System.out.println();
+                        break;
                 }
             }
 
             // tela principal
             if (usuarioLogado.getIsAutenticado()) {
-                usuarioLogado.exibirDetalhes();
+                perfilSelecionado = usuarioLogado.escolherPerfil();
+
+                if (perfilSelecionado instanceof Cliente) {
+                    System.out.println("Perfil atual: Cliente");
+                }
+
+                if (perfilSelecionado instanceof Prestador) {
+                    System.out.println("Perfil atual: Prestador");
+                }
+
+                if (perfilSelecionado instanceof Administrador) {
+                    System.out.println("Perfil atual: Administrador");
+                }
+
+                perfilSelecionado.exibirDetalhes();
                 usuarioLogado.encerrarLogin();
                 autenticacaoCompleta = false;
             }

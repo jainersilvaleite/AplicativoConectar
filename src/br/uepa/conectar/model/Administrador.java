@@ -1,6 +1,19 @@
 package br.uepa.conectar.model;
 
-public class Administrador {
+import java.util.ArrayList;
+
+public class Administrador extends Usuario {
+    // gera um perfil de administrador baseado nas informações originais do usuário
+    public Administrador(Usuario usuario) {
+        setId(usuario.getId());
+        setNome(usuario.getNome());
+        setEmail(usuario.getEmail());
+        setTelefone(usuario.getTelefone());
+        setEndereco(usuario.getEndereco());
+        setDataNascimento(usuario.getDataNascimento());
+        setIsAutenticado(usuario.getIsAutenticado());
+    }
+
     public void atualizarUsuario() {
 
     }
