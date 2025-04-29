@@ -1,5 +1,6 @@
 package br.uepa.conectar.util;
 
+import br.uepa.conectar.model.Prestador;
 import br.uepa.conectar.model.Servico;
 import br.uepa.conectar.model.Usuario;
 
@@ -17,7 +18,7 @@ public interface Consultavel {
 
     default Servico consultarServicoPorId(List<Servico> servicos, int id) {
         // percorre todos os serviços existentes e busca por um com id correspondente
-        for (Servico servico : servicos) {
+        for (Servico servico: servicos) {
             if (id == servico.getId()) return servico;
         }
         return null;
@@ -29,6 +30,25 @@ public interface Consultavel {
         for (Servico servico : servicos) {
             if (servico.getTitulo().toLowerCase().contains(pesquisa.toLowerCase())) {
                 resultadosPesquisa.add(servico);
+            }
+        }
+        return resultadosPesquisa;
+    }
+
+    default Prestador consultarPrestadorPorId(List<Usuario> usuarios, int id) {
+        // percorre todos os usuários existentes e busca por um com id correspondente
+        for (Usuario usuario: usuarios) {
+            if (id == usuario.getId()) return (Prestador) usuario.getPerfis().get(1);
+        }
+        return null;
+    }
+
+    default List<Prestador> pesquisarPrestadoresPorNome(List<Usuario> usuarios, String pesquisa) {
+        List<Prestador> resultadosPesquisa = new ArrayList<>();
+        // percorre todos os usuários e seleciona aqueles cujos nomes contém o trecho pesquisado
+        for (Usuario usuario: usuarios) {
+            if (usuario.getNome().toLowerCase().contains(pesquisa.toLowerCase())) {
+                resultadosPesquisa.add((Prestador) usuario.getPerfis().get(1));
             }
         }
         return resultadosPesquisa;

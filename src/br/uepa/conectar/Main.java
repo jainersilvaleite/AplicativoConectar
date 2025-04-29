@@ -136,6 +136,7 @@ public class Main {
                                 perfilSelecionado.visualizarServicos(servicos);
                                 break;
                             case 2:
+                                ((Cliente) perfilSelecionado).pesquisarPrestadores(usuarios);
                                 break;
                             // caso o usuário queira encerrar a sessão
                             case 3:

@@ -46,8 +46,61 @@ public class Cliente extends Usuario {
 
     }
 
-    public void pesquisarPrestadores() {
+    public void pesquisarPrestadores(List<Usuario> usuarios) {
+        boolean prestadoresVisualizados = false; // verifica se o usuário fechou o menu de visualização de prestadores
+        Scanner entradaOpcao = new Scanner(System.in); // possibilita a entrada do usuário com alguma das opções
+        Scanner entradaTexto = new Scanner(System.in); // possibilita a entrada com informações de texto solicitadas
+        int opcao; // armazena a opção inserida pelo usuário recentemente
+        String texto; // armazena a informação de texto solicitada recentemente
 
+        while (!prestadoresVisualizados) {
+            System.out.println();
+            System.out.println();
+            System.out.print("Insira um prestador para buscar: ");
+            texto = entradaTexto.nextLine();
+
+            System.out.println();
+            System.out.println("Resultados da busca: " + texto);
+            System.out.println("------------------------------------");
+            List<Prestador> resultadosPesquisa = super.pesquisarPrestadoresPorNome(usuarios, texto);
+            if (!resultadosPesquisa.isEmpty()) {
+                for (Prestador prestador: resultadosPesquisa) {
+                    System.out.println("-> Id: " + prestador.getId() + " | Nome: " + getNome());
+                    System.out.println("Formações: " + prestador.getFormacoes());
+                    System.out.println();
+                }
+            } else {
+                System.out.println("Nenhum prestador encontrado para esta busca!");
+            }
+
+            System.out.println("------------------------------------");
+            System.out.println("O que gostaria de fazer agora?");
+            System.out.println("1 - Visualizar perfil de um prestador.");
+            System.out.println("2 - Voltar ao menu anterior.");
+            System.out.println("Insira qualquer outro dígito para refazer a busca.");
+            System.out.print("Sua opção: ");
+            opcao = entradaOpcao.nextInt();
+
+            switch (opcao) {
+                case 1:
+                    System.out.println();
+                    System.out.print("Insira o id do prestador: ");
+                    opcao = entradaOpcao.nextInt();
+
+                    Prestador prestador = super.consultarPrestadorPorId(usuarios, opcao);
+                    if (prestador != null) {
+                        System.out.println("Visualizando perfil do Prestador...");
+                    } else {
+                        System.out.println("[ERRO] O id informado não corresponde a um prestador cadastrado!");
+                    }
+                    break;
+                case 2:
+                    prestadoresVisualizados = true;
+                    break;
+                default:
+                    break;
+            }
+        }
     }
 
     public void visualizarPerfilDoPrestador() {
