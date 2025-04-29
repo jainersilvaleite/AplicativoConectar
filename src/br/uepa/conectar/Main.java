@@ -108,12 +108,54 @@ public class Main {
                 }
             }
 
-            // tela principal
+            // área principal do aplicativo (pós-login)
             if (usuarioLogado.getIsAutenticado()) {
                 perfilSelecionado = usuarioLogado.escolherPerfil();
 
+                // exibição de informações e menus de acordo com o perfil selecionado
                 if (perfilSelecionado instanceof Cliente) {
                     System.out.println("Perfil atual: Cliente");
+
+                    // telas disponíveis para o perfil Cliente
+                    boolean telaPrincipalAtiva = false; // verifica se o cliente saiu da tela principal
+
+                    while (!telaPrincipalAtiva) {
+                        System.out.println();
+                        System.out.println("------------------------------------");
+                        System.out.println("O que gostaria de fazer agora?");
+                        System.out.println("1 - Solicitar um serviço.");
+                        System.out.println("2 - Pesquisar prestadores.");
+                        System.out.println("3 - Encerrar sessão.");
+                        System.out.println("4 - Encerrar aplicativo.");
+                        System.out.print("Sua opção: ");
+                        opcao = entradaOpcao.nextInt();
+
+                        switch (opcao) {
+                            // caso o usuário queira solicitar/pesquisar um serviço
+                            case 1:
+                                perfilSelecionado.visualizarServicos(servicos);
+                                break;
+                            case 2:
+                                break;
+                            // caso o usuário queira encerrar a sessão
+                            case 3:
+                                usuarioLogado.encerrarLogin();
+                                autenticacaoCompleta = false;
+                                telaPrincipalAtiva = true;
+                                break;
+                            // caso o usuário queira encerrar o aplicativo
+                            case 4:
+                                System.out.println();
+                                System.out.println("Obrigado por utilizar nosso aplicativo! Encerrando...");
+                                aplicativoAtivo = false;
+                                telaPrincipalAtiva = true;
+                                break;
+                            default:
+                                System.out.println("[ERRO] Opção inválida, selecione uma das opções disponíveis!");
+                                System.out.println();
+                                break;
+                        }
+                    }
                 }
 
                 if (perfilSelecionado instanceof Prestador) {
@@ -124,9 +166,9 @@ public class Main {
                     System.out.println("Perfil atual: Administrador");
                 }
 
-                perfilSelecionado.exibirDetalhes();
-                usuarioLogado.encerrarLogin();
-                autenticacaoCompleta = false;
+//                perfilSelecionado.exibirDetalhes();
+//                usuarioLogado.encerrarLogin();
+//                autenticacaoCompleta = false;
             }
         }
     }

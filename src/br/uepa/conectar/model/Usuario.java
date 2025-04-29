@@ -271,8 +271,18 @@ public class Usuario implements Consultavel {
 
     }
 
-    public void visualizarServicos() {
+    public void visualizarServicos(List<Servico> servicos) {
+        if (!servicos.isEmpty()) {
+            for (Servico servico: servicos) {
+                servico.exibirDetalhes();
+            }
 
+            System.out.println();
+            System.out.println("Também quer ter seus serviços na Conectar? Acesse seu perfil de Prestador!");
+        } else {
+            System.out.println("Nenhum serviço foi cadastrado por enquanto!");
+            System.out.println("Que tal ser o primeiro? Acesse seu perfil de Prestador e comece já!");
+        }
     }
 
     public void aceitarProposta() {
