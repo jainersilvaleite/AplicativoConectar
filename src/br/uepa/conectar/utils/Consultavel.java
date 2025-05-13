@@ -1,9 +1,9 @@
-package br.uepa.conectar.util;
+package br.uepa.conectar.utils;
 
-import br.uepa.conectar.model.Prestador;
-import br.uepa.conectar.model.Proposta;
-import br.uepa.conectar.model.Servico;
-import br.uepa.conectar.model.Usuario;
+import br.uepa.conectar.models.Prestador;
+import br.uepa.conectar.models.Proposta;
+import br.uepa.conectar.models.Servico;
+import br.uepa.conectar.models.Usuario;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -68,6 +68,17 @@ public interface Consultavel {
         // percorre todas as propostas e seleciona aquelas cujos titulos contém o trecho pesquisado
         for (Proposta proposta : propostas) {
             if (proposta.getTitulo().toLowerCase().contains(pesquisa.toLowerCase())) {
+                resultadosPesquisa.add(proposta);
+            }
+        }
+        return resultadosPesquisa;
+    }
+
+    default List<Proposta> pesquisarPropostasPorNomeCliente(List<Proposta> propostas, String pesquisa) {
+        List<Proposta> resultadosPesquisa = new ArrayList<>();
+        // percorre todas as propostas e seleciona aquelas cujos nomes de Clientes contém o trecho pesquisado
+        for (Proposta proposta : propostas) {
+            if (proposta.getCliente().getNome().toLowerCase().contains(pesquisa.toLowerCase())) {
                 resultadosPesquisa.add(proposta);
             }
         }

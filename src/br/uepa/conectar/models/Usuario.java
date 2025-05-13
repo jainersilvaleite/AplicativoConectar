@@ -1,6 +1,6 @@
-package br.uepa.conectar.model;
+package br.uepa.conectar.models;
 
-import br.uepa.conectar.util.Consultavel;
+import br.uepa.conectar.utils.Consultavel;
 
 import java.lang.module.FindException;
 import java.time.LocalDate;
@@ -106,7 +106,7 @@ public class Usuario implements Consultavel {
         }
     }
 
-    public void preencherDadosDePerfil(List<Usuario> usuarios) {
+    public void preencherDadosDePerfil(List<Usuario> usuarios, int idContadorUsuario) {
         boolean cadastroCompleto = false; // verifica se o cadastro foi terminado
         Scanner entradaInformacao = new Scanner(System.in); // armazena a entrada de informação do usuário
         String informacao; // preenchimento da informação do usuário para cadastro
@@ -149,6 +149,8 @@ public class Usuario implements Consultavel {
                 System.out.println("Cadastro realizado com sucesso!");
                 System.out.println();
 
+                setId(idContadorUsuario); // preenchimento automático do id do usuário
+
                 getPerfis().add(new Cliente(this)); // gera um perfil de cliente para o usuário recém-criado
                 getPerfis().add(new Prestador(this)); // gera um perfil de prestador para o usuário recém-criado
                 cadastroCompleto = true;
@@ -185,7 +187,7 @@ public class Usuario implements Consultavel {
             switch (opcao) {
                 // caso o usuário selecione o perfil de Cliente, ele deve informar seu cpf, se não tiver
                 case 1:
-                    Cliente cliente = (Cliente) getPerfis().getFirst();
+                    Cliente cliente = (Cliente) getPerfis().getFirst(); // lista de perfis (ordem): cliente, prestador, administrador
 
                     // caso possua cpf
                     if (!cliente.getCpf().equals("Não informado.")) {

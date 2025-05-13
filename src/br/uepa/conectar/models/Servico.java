@@ -1,6 +1,6 @@
-package br.uepa.conectar.model;
+package br.uepa.conectar.models;
 
-import br.uepa.conectar.util.Consultavel;
+import br.uepa.conectar.utils.Consultavel;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -134,7 +134,7 @@ public class Servico implements Consultavel {
                     System.out.println();
                     System.out.println("Resultados da busca: " + texto);
                     System.out.println("------------------------------------");
-                    List<Proposta> resultadosPesquisa = pesquisarPropostasPorTitulo(getPropostas(), texto);
+                    List<Proposta> resultadosPesquisa = pesquisarPropostasPorNomeCliente(getPropostas(), texto);
                     if (!resultadosPesquisa.isEmpty()) {
                         for (Proposta proposta: resultadosPesquisa) {
                             proposta.exibirDetalhes();

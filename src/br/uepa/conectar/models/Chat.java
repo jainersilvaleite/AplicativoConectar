@@ -1,5 +1,6 @@
-package br.uepa.conectar.model;
+package br.uepa.conectar.models;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public class Chat {
@@ -7,6 +8,10 @@ public class Chat {
     private Cliente cliente;
     private Prestador prestador;
     private List<Mensagem> mensagens;
+
+    public Chat() {
+        this.mensagens = new ArrayList<>();
+    }
 
     public int getId() {
         return id;
@@ -44,7 +49,7 @@ public class Chat {
 
     }
 
-    public void visualizarMensagens() {
+    public void visualizarMensagens(Usuario perfilSelecionado) {
 
     }
 
@@ -52,3 +57,4 @@ public class Chat {
 
     }
 }
+

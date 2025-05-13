@@ -1,4 +1,4 @@
-package br.uepa.conectar.model;
+package br.uepa.conectar.models;
 
 import java.util.ArrayList;
 import java.util.List;

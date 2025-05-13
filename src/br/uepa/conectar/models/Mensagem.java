@@ -1,4 +1,4 @@
-package br.uepa.conectar.model;
+package br.uepa.conectar.models;
 
 import java.time.LocalDate;
 
@@ -6,6 +6,7 @@ public class Mensagem {
     private int id;
     private Usuario autor;
     private LocalDate dataEnvio;
+    private String conteudo;
 
     public int getId() {
         return id;
@@ -29,6 +30,14 @@ public class Mensagem {
 
     public void setDataEnvio(LocalDate dataEnvio) {
         this.dataEnvio = dataEnvio;
+    }
+
+    public String getConteudo() {
+        return conteudo;
+    }
+
+    public void setConteudo(String conteudo) {
+        this.conteudo = conteudo;
     }
 
     public void exibirDetalhes() {

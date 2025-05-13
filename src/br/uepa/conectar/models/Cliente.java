@@ -1,4 +1,4 @@
-package br.uepa.conectar.model;
+package br.uepa.conectar.models;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -99,7 +99,7 @@ public class Cliente extends Usuario {
             List<Prestador> resultadosPesquisa = super.pesquisarPrestadoresPorNome(usuarios, texto);
             if (!resultadosPesquisa.isEmpty()) {
                 for (Prestador prestador: resultadosPesquisa) {
-                    System.out.println("-> Id: " + prestador.getId() + " | Nome: " + getNome());
+                    System.out.println("-> Id: " + prestador.getId() + " | Nome: " + prestador.getNome());
                     System.out.println("Formações: " + prestador.getFormacoes());
                     System.out.println();
                 }
@@ -192,6 +192,16 @@ public class Cliente extends Usuario {
             propostaServico.setTitulo("Proposta para " + servico.getPrestador().getNome());
             propostaServico.setTipo("Proposta indireta (" + servico.getTipo() + ")");
             propostaServico.setDescricao("Olá, gostaria de solicitar o serviço " + servico.getTitulo());
+
+            // sistema de geração de ids para propostas indiretas
+            int idProposta = servico.getPropostas().size() + 1; // id da proposta de acordo com a quantidade existente
+            // o sistema tenta utilizar o idProposta inicial, mas se não conseguir, gera um novo id até que seja possível
+            while (super.consultarPropostaPorId(servico.getPropostas(), idProposta) != null) {
+                idProposta++;
+            }
+
+            // após encontrar um id que não esteja sendo usado, o sistema associa a nova proposta indireta
+            propostaServico.setId(idProposta);
 
             servico.receberProposta(propostaServico);
         } else {

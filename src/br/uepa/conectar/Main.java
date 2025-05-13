@@ -1,6 +1,6 @@
 package br.uepa.conectar;
 
-import br.uepa.conectar.model.*;
+import br.uepa.conectar.models.*;
 
 import java.time.LocalDate;
 import java.util.ArrayList;
@@ -60,8 +60,7 @@ public class Main {
                     // caso o usuário queira criar sua conta, ele precisará preencher seus dados
                     case 1:
                         Usuario novoUsuario = new Usuario(); // instância do usuário a ser criado
-                        novoUsuario.preencherDadosDePerfil(usuarios); // preenchimento dos dados do usuário
-                        novoUsuario.setId(idContadorUsuario); // associação do usuário a um id
+                        novoUsuario.preencherDadosDePerfil(usuarios, idContadorUsuario); // preenchimento dos dados do usuário
                         usuarios.add(novoUsuario); // novo usuário é inserido no "banco de dados"
                         idContadorUsuario++; // incremento do contador para geração dos ids de usuários
                         break;
@@ -278,3 +277,4 @@ public class Main {
         }
     }
 }
+

@@ -1,6 +1,6 @@
-package br.uepa.conectar.model;
+package br.uepa.conectar.models;
 
-import br.uepa.conectar.util.Consultavel;
+import br.uepa.conectar.utils.Consultavel;
 
 public class Proposta implements Consultavel {
     private int id;

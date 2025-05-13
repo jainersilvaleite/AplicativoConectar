@@ -1,6 +1,4 @@
-package br.uepa.conectar.model;
-
-import java.util.ArrayList;
+package br.uepa.conectar.models;
 
 public class Administrador extends Usuario {
     // gera um perfil de administrador baseado nas informações originais do usuário
