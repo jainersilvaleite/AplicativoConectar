@@ -14,6 +14,7 @@ public class Main {
         List<Servico> servicos = new ArrayList<>(); // armazena todos os serviços do aplicativo
         List<Proposta> propostas = new ArrayList<>(); // armazena todas as propostas do aplicativo
         List<OrdemDeServico> ordensDeServico = new ArrayList<>(); // armazena todas as ordens de serviço do aplicativo
+        List<Chat> chats = new ArrayList<>(); // armazena todos os chats gerados pelo aplicativo
 
         // criação do usuário Administrador
         Usuario usuarioAdministrador = new Usuario();
@@ -146,7 +147,7 @@ public class Main {
                                 break;
                             // caso o usuário queira solicitar/pesquisar um serviço
                             case 2:
-                                perfilSelecionado.visualizarServicos(servicos);
+                                perfilSelecionado.visualizarServicos(servicos, chats, propostas);
                                 break;
                             // caso o usuário queira pesquisar por um prestador
                             case 3:
@@ -158,7 +159,8 @@ public class Main {
                                 break;
                             // caso o usuário queira visualizar suas propostas
                             case 5:
-                                perfilSelecionado.visualizarPropostas(propostas);
+                                // visualiza as propostas cadastradas pelo cliente e retorna o id do chat de uma das propostas
+                                int idChat = perfilSelecionado.visualizarPropostas(propostas);
                                 /* verifica se há alguma proposta no "banco de dados"
                                 que não existe mais para um cliente, indicando que ele a removeu */
                                 var propostasCliente = ((Cliente) perfilSelecionado).getPropostas();
@@ -169,6 +171,22 @@ public class Main {
                                     if (!propostasCliente.contains(proposta)) {
                                         propostas.remove(proposta);
                                         break;
+                                    }
+                                }
+
+                                // se o cliente acessou o chat de alguma proposta
+                                if (idChat != -1) {
+                                    Chat chat = perfilSelecionado.consultarChatPorId(chats, idChat);
+                                    // proposta associada ao chat
+                                    Proposta proposta = perfilSelecionado.consultarPropostaPorId(propostas, idChat);
+
+                                    // caso o chat já exista, acessá-lo e visualizar suas mensagens
+                                    if (chat != null) {
+                                        chat.visualizarMensagens(proposta, perfilSelecionado);
+                                    } else {
+                                        // caso o chat não exista, avisar para o cliente aguardar um Prestador entrar em contato
+                                        System.out.println("[ERRO] O Chat para esta proposta ainda não foi iniciado!");
+                                        System.out.println("Aguarde até que um Prestador o atenda.");
                                     }
                                 }
                                 break;
@@ -223,7 +241,24 @@ public class Main {
                                 break;
                             // caso o usuário queira visualizar as propostas cadastradas diretamente
                             case 2:
-                                perfilSelecionado.visualizarPropostas(propostas);
+                                int idChat = perfilSelecionado.visualizarPropostas(propostas);
+
+                                // se o prestador acessou o chat de alguma proposta
+                                if (idChat != -1) {
+                                    Chat chat = perfilSelecionado.consultarChatPorId(chats, idChat);
+                                    // proposta associada ao chat
+                                    Proposta proposta = perfilSelecionado.consultarPropostaPorId(propostas, idChat);
+
+                                    // caso o chat já exista, acessá-lo e visualizar suas mensagens
+                                    if (chat != null) {
+                                        chat.visualizarMensagens(proposta, perfilSelecionado);
+                                    } else {
+                                        // caso o chat não exista, criá-lo
+                                        Chat novoChat = proposta.iniciarChat((Prestador) perfilSelecionado); // chat entre cliente e prestador
+                                        chats.add(novoChat); // adiciona o novo chat ao banco de dados
+                                        novoChat.visualizarMensagens(proposta, perfilSelecionado); // visualiza as mensagens do chat criado
+                                    }
+                                }
                                 break;
                             // caso o usuário queira visualizar seu perfil
                             case 3:
@@ -231,7 +266,7 @@ public class Main {
                                 break;
                             // caso o usuário queira visualizar seus serviços cadastrados
                             case 4:
-                                perfilSelecionado.visualizarServicos(servicos);
+                                perfilSelecionado.visualizarServicos(servicos, chats, propostas);
                                 /* verifica se há algum serviço no "banco de dados"
                                 que não existe mais para um prestador, indicando que ele a removeu */
                                 var servicosPrestador = ((Prestador) perfilSelecionado).getServicos();

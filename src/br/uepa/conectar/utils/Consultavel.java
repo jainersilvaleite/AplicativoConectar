@@ -1,9 +1,6 @@
 package br.uepa.conectar.utils;
 
-import br.uepa.conectar.models.Prestador;
-import br.uepa.conectar.models.Proposta;
-import br.uepa.conectar.models.Servico;
-import br.uepa.conectar.models.Usuario;
+import br.uepa.conectar.models.*;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -83,5 +80,13 @@ public interface Consultavel {
             }
         }
         return resultadosPesquisa;
+    }
+
+    default Chat consultarChatPorId(List<Chat> chats, int id) {
+        // percorre todos os chats existentes e busca por um com id correspondente
+        for (Chat chat: chats) {
+            if (id == chat.getId()) return chat;
+        }
+        return null;
     }
 }

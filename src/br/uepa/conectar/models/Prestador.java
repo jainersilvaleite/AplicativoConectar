@@ -130,12 +130,12 @@ public class Prestador extends Usuario {
     }
 
     @Override
-    public void visualizarServicos(List<Servico> servicos) {
+    public void visualizarServicos(List<Servico> servicos, List<Chat> chats, List<Proposta> propostas) {
         System.out.println();
         System.out.println("Seus serviços cadastrados no aplicativo");
         System.out.println("------------------------------------");
 
-        super.visualizarServicos(getServicos());
+        super.visualizarServicos(getServicos(), chats, propostas);
 
         boolean servicosVisualizados = false; // verifica se o usuário decidiu fechar o menu de visualização de serviços
         Scanner entradaOpcao = new Scanner(System.in); // possibilita a entrada do usuário com alguma das opções
@@ -172,7 +172,24 @@ public class Prestador extends Usuario {
 
                     servico = super.consultarServicoPorId(servicos, opcao);
                     if (servico != null) {
-                        servico.visualizarPropostas();
+                        int idChat = servico.visualizarPropostas();
+
+                        // se o prestador acessou o chat de alguma proposta
+                        if (idChat != -1) {
+                            Chat chat = consultarChatPorId(chats, idChat);
+                            // proposta associada ao chat
+                            Proposta proposta = consultarPropostaPorId(propostas, idChat);
+
+                            // caso o chat já exista, acessá-lo e visualizar suas mensagens
+                            if (chat != null) {
+                                chat.visualizarMensagens(proposta, this);
+                            } else {
+                                // caso o chat não exista, criá-lo
+                                Chat novoChat = proposta.iniciarChat(this); // chat entre cliente e prestador
+                                chats.add(novoChat); // adiciona o novo chat ao banco de dados
+                                novoChat.visualizarMensagens(proposta, this); // visualiza as mensagens do chat criado
+                            }
+                        }
                     } else {
                         System.out.println("[ERRO] O id informado não corresponde a um serviço cadastrado!");
                     }
@@ -189,7 +206,7 @@ public class Prestador extends Usuario {
     }
 
     @Override
-    public void visualizarPropostas(List<Proposta> propostas) {
+    public int visualizarPropostas(List<Proposta> propostas) {
         System.out.println();
         System.out.println("Propostas cadastradas no aplicativo");
         System.out.println("------------------------------------");
@@ -199,6 +216,8 @@ public class Prestador extends Usuario {
         boolean propostasVisualizadas = false; // verifica se o usuário decidiu fechar o menu de visualização de propostas
         Scanner entradaOpcao = new Scanner(System.in); // possibilita a entrada do usuário com alguma das opções
         int opcao; // armazena a opção inserida pelo usuário recentemente
+        Proposta proposta = new Proposta(); // armazena a proposta em foco
+        proposta.setId(-1); // id padrão para o caso de nenhum chat de proposta ter sido acessado
 
         while (!propostasVisualizadas) {
             System.out.println();
@@ -211,7 +230,17 @@ public class Prestador extends Usuario {
 
             switch (opcao) {
                 case 1:
-                    // acessar chat da proposta
+                    System.out.println();
+                    System.out.print("Insira o id da proposta: ");
+                    opcao = entradaOpcao.nextInt();
+
+                    proposta = super.consultarPropostaPorId(propostas, opcao);
+                    if (proposta != null) {
+                        // finaliza a visualização de propostas para acessar o chat de uma proposta específica
+                        propostasVisualizadas = true;
+                    } else {
+                        System.out.println("[ERRO] O id informado não corresponde a uma proposta cadastrada!");
+                    }
                     break;
                 case 2:
                     pesquisarPropostas(propostas);
@@ -225,5 +254,9 @@ public class Prestador extends Usuario {
                     break;
             }
         }
+        // retorno do id do chat (-1 se não foi selecionado nenhum)
+        if (proposta != null) {
+            return proposta.getId();
+        } else return -1;
     }
 }

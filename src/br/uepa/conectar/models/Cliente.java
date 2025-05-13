@@ -170,7 +170,7 @@ public class Cliente extends Usuario {
         System.out.println("------------------------------------");
         List<Servico> resultadosPesquisa = super.pesquisarServicosPorTitulo(servicos, texto);
         if (!resultadosPesquisa.isEmpty()) {
-            super.visualizarServicos(resultadosPesquisa);
+            super.visualizarServicos(resultadosPesquisa, new ArrayList<>(), new ArrayList<>());
         } else {
             System.out.println("Nenhum serviço encontrado para esta busca!");
         }
@@ -224,12 +224,12 @@ public class Cliente extends Usuario {
     }
 
     @Override
-    public void visualizarServicos(List<Servico> servicos) {
+    public void visualizarServicos(List<Servico> servicos, List<Chat> chats, List<Proposta> propostas) {
         System.out.println();
         System.out.println("Serviços cadastrados no aplicativo");
         System.out.println("------------------------------------");
 
-        super.visualizarServicos(servicos);
+        super.visualizarServicos(servicos, chats, propostas);
 
         boolean servicosVisualizados = false; // verifica se o usuário decidiu fechar o menu de visualização de serviços
         Scanner entradaOpcao = new Scanner(System.in); // possibilita a entrada do usuário com alguma das opções
@@ -263,7 +263,7 @@ public class Cliente extends Usuario {
     }
 
     @Override
-    public void visualizarPropostas(List<Proposta> propostas) {
+    public int visualizarPropostas(List<Proposta> propostas) {
         System.out.println();
         System.out.println("Suas propostas cadastradas no aplicativo");
         System.out.println("------------------------------------");
@@ -273,6 +273,8 @@ public class Cliente extends Usuario {
         boolean propostasVisualizadas = false; // verifica se o usuário decidiu fechar o menu de visualização de propostas
         Scanner entradaOpcao = new Scanner(System.in); // possibilita a entrada do usuário com alguma das opções
         int opcao; // armazena a opção inserida pelo usuário recentemente
+        Proposta proposta = new Proposta(); // armazena a proposta em foco
+        proposta.setId(-1); // id padrão para o caso de nenhum chat de proposta ter sido acessado
 
         while (!propostasVisualizadas) {
             System.out.println();
@@ -289,16 +291,26 @@ public class Cliente extends Usuario {
                     System.out.print("Insira o id da proposta: ");
                     opcao = entradaOpcao.nextInt();
 
-                    Proposta proposta = super.consultarPropostaPorId(propostas, opcao);
+                    proposta = super.consultarPropostaPorId(propostas, opcao);
                     if (proposta != null) {
                         getPropostas().remove(proposta);
                         System.out.println("Proposta removida com sucesso!");
                     } else {
-                        System.out.println("[ERRO] O id informado não corresponde a uma proposta cadastrado!");
+                        System.out.println("[ERRO] O id informado não corresponde a uma proposta cadastrada!");
                     }
                     break;
                 case 2:
-                    // acessar chat da proposta
+                    System.out.println();
+                    System.out.print("Insira o id da proposta: ");
+                    opcao = entradaOpcao.nextInt();
+
+                    proposta = super.consultarPropostaPorId(propostas, opcao);
+                    if (proposta != null) {
+                        // finaliza a visualização de propostas para acessar o chat de uma proposta específica
+                        propostasVisualizadas = true;
+                    } else {
+                        System.out.println("[ERRO] O id informado não corresponde a uma proposta cadastrada!");
+                    }
                     break;
                 case 3:
                     propostasVisualizadas = true;
@@ -309,5 +321,9 @@ public class Cliente extends Usuario {
                     break;
             }
         }
+        // retorno do id do chat (-1 se não foi selecionado nenhum)
+        if (proposta != null) {
+            return proposta.getId();
+        } else return -1;
     }
 }

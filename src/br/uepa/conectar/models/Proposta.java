@@ -67,8 +67,15 @@ public class Proposta implements Consultavel {
         this.aceitePrestador = aceitePrestador;
     }
 
-    public void iniciarChat() {
+    public Chat iniciarChat(Prestador prestador) {
+        // instância do novo chat a ser criado
+        Chat novoChat = new Chat();
+        novoChat.setId(getId());
+        novoChat.setCliente(getCliente());
+        novoChat.setPrestador(prestador);
 
+        // retorno do chat criado para armazenamento no banco de dados
+        return novoChat;
     }
 
     public void exibirDetalhes() {

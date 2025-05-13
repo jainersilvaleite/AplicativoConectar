@@ -268,7 +268,8 @@ public class Usuario implements Consultavel {
         System.out.println("Nascimento: " + getDataNascimento().toString());
     }
 
-    public void visualizarPropostas(List<Proposta> propostas) {
+    // visualiza propostas e possívelmente retorna o id de um chat
+    public int visualizarPropostas(List<Proposta> propostas) {
         if (!propostas.isEmpty()) {
             for (Proposta proposta: propostas) {
                 proposta.exibirDetalhes();
@@ -278,9 +279,10 @@ public class Usuario implements Consultavel {
         } else {
             System.out.println("Nenhuma proposta foi cadastrada por enquanto!");
         }
+        return -1;
     }
 
-    public void visualizarServicos(List<Servico> servicos) {
+    public void visualizarServicos(List<Servico> servicos, List<Chat> chats, List<Proposta> propostas) {
         if (!servicos.isEmpty()) {
             for (Servico servico: servicos) {
                 servico.exibirDetalhes();

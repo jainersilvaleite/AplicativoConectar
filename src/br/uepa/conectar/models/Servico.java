@@ -90,17 +90,19 @@ public class Servico implements Consultavel {
 
     }
 
-    public void visualizarPropostas() {
+    public int visualizarPropostas() {
         Scanner entradaTexto = new Scanner(System.in); // possibilita a entrada com informações de texto solicitadas
         String texto; // armazena a informação de texto solicitada recentemente
+        Proposta proposta = new Proposta(); // armazena a proposta em foco
+        proposta.setId(-1); // id padrão para o caso de nenhum chat de proposta ter sido acessado
 
         System.out.println();
         System.out.println("Propostas para o serviço selecionado");
         System.out.println("------------------------------------");
 
         if (!getPropostas().isEmpty()) {
-            for (Proposta proposta: getPropostas()) {
-                proposta.exibirDetalhes();
+            for (Proposta propostaServico : getPropostas()) {
+                propostaServico.exibirDetalhes();
             }
 
             System.out.println();
@@ -123,7 +125,17 @@ public class Servico implements Consultavel {
 
             switch (opcao) {
                 case 1:
-                    // acessar chat da proposta
+                    System.out.println();
+                    System.out.print("Insira o id da proposta: ");
+                    opcao = entradaOpcao.nextInt();
+
+                    proposta = consultarPropostaPorId(getPropostas(), opcao);
+                    if (proposta != null) {
+                        // finaliza a visualização de propostas para acessar o chat de uma proposta específica
+                        propostasVisualizadas = true;
+                    } else {
+                        System.out.println("[ERRO] O id informado não corresponde a uma proposta cadastrada!");
+                    }
                     break;
                 case 2:
                     System.out.println();
@@ -136,8 +148,8 @@ public class Servico implements Consultavel {
                     System.out.println("------------------------------------");
                     List<Proposta> resultadosPesquisa = pesquisarPropostasPorNomeCliente(getPropostas(), texto);
                     if (!resultadosPesquisa.isEmpty()) {
-                        for (Proposta proposta: resultadosPesquisa) {
-                            proposta.exibirDetalhes();
+                        for (Proposta propostaServico : resultadosPesquisa) {
+                            propostaServico.exibirDetalhes();
                         }
                     } else {
                         System.out.println("Nenhuma proposta encontrada para esta busca!");
@@ -152,6 +164,11 @@ public class Servico implements Consultavel {
                     break;
             }
         }
+
+        // retorno do id do chat (-1 se não foi selecionado nenhum)
+        if (proposta != null) {
+            return proposta.getId();
+        } else return -1;
     }
 
     public void exibirDetalhes() {
