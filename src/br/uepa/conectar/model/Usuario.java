@@ -159,7 +159,6 @@ public class Usuario implements Consultavel {
                 System.out.println();
             }
         }
-
     }
 
     public Usuario escolherPerfil() {
@@ -267,8 +266,16 @@ public class Usuario implements Consultavel {
         System.out.println("Nascimento: " + getDataNascimento().toString());
     }
 
-    public void visualizarPropostas() {
+    public void visualizarPropostas(List<Proposta> propostas) {
+        if (!propostas.isEmpty()) {
+            for (Proposta proposta: propostas) {
+                proposta.exibirDetalhes();
+            }
 
+            System.out.println();
+        } else {
+            System.out.println("Nenhuma proposta foi cadastrada por enquanto!");
+        }
     }
 
     public void visualizarServicos(List<Servico> servicos) {
@@ -278,10 +285,14 @@ public class Usuario implements Consultavel {
             }
 
             System.out.println();
-            System.out.println("Também quer ter seus serviços na Conectar? Acesse seu perfil de Prestador!");
+            if (!(this instanceof Prestador)) {
+                System.out.println("Também quer ter seus serviços na Conectar? Acesse seu perfil de Prestador!");
+            }
         } else {
             System.out.println("Nenhum serviço foi cadastrado por enquanto!");
-            System.out.println("Que tal ser o primeiro? Acesse seu perfil de Prestador e comece já!");
+            if (!(this instanceof Prestador)) {
+                System.out.println("Que tal ser o primeiro? Acesse seu perfil de Prestador e comece já!");
+            }
         }
     }
 

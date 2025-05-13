@@ -1,6 +1,8 @@
 package br.uepa.conectar.model;
 
-public class Proposta {
+import br.uepa.conectar.util.Consultavel;
+
+public class Proposta implements Consultavel {
     private int id;
     private Cliente cliente;
     private String titulo;
@@ -70,6 +72,10 @@ public class Proposta {
     }
 
     public void exibirDetalhes() {
-
+        System.out.println("-> Id: " + getId() + " | Título: " + getTitulo());
+        System.out.println("De: " + getCliente().getNome());
+        System.out.println("Tipo: " + getTipo());
+        System.out.println("Descrição: " + getDescricao());
+        System.out.println();
     }
 }

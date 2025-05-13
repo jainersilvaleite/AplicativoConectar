@@ -38,12 +38,46 @@ public class Cliente extends Usuario {
         return propostas;
     }
 
-    public void setPropostas(List<Proposta> propostas) {
-        this.propostas = propostas;
-    }
+    public Proposta cadastrarProposta() {
+        boolean cadastroCompleto = false; // verifica se o cadastro da proposta foi terminado
+        Scanner entradaInformacao = new Scanner(System.in); // armazena a entrada de informação da proposta
+        String informacao; // preenchimento da informação da proposta para cadastro
+        Proposta novaProposta = new Proposta(); // instância da proposta a ser cadastrada
 
-    public void cadastrarProposta() {
+        while (!cadastroCompleto) {
+            System.out.println();
+            System.out.println("Preencha os dados da proposta:");
+            System.out.println("------------------------------------");
 
+            try {
+                System.out.println();
+                System.out.print("Título da proposta: ");
+                informacao = entradaInformacao.nextLine(); // preenchimento do titulo da proposta
+                novaProposta.setTitulo(informacao);
+
+                System.out.print("Tipo da proposta: ");
+                informacao = entradaInformacao.nextLine(); // preenchimento do tipo da proposta
+                novaProposta.setTipo(informacao);
+
+                System.out.print("Descrição da proposta: ");
+                informacao = entradaInformacao.nextLine(); // preenchimento da descrição da proposta
+                novaProposta.setDescricao(informacao);
+
+                System.out.println("Proposta cadastrada com sucesso!");
+                System.out.println("Aguarde até que um prestador de serviços atenda seu pedido.");
+                System.out.println();
+
+                novaProposta.setCliente(this); // define o cliente autor da proposta
+                getPropostas().add(novaProposta); // adiciona a proposta cadastrada a lista de propostas do cliente
+                cadastroCompleto = true;
+            } catch (Exception e) {
+                System.out.println("[ERRO] Ocorreu um erro ao realizar o cadastro da proposta: " + e.getMessage());
+                System.out.println("Reiniciando o preenchimento de dados...");
+                System.out.println();
+            }
+        }
+
+        return novaProposta;
     }
 
     public void pesquisarPrestadores(List<Usuario> usuarios) {
@@ -89,7 +123,7 @@ public class Cliente extends Usuario {
 
                     Prestador prestador = super.consultarPrestadorPorId(usuarios, opcao);
                     if (prestador != null) {
-                        System.out.println("Visualizando perfil do Prestador...");
+                        visualizarPerfilDoPrestador(prestador);
                     } else {
                         System.out.println("[ERRO] O id informado não corresponde a um prestador cadastrado!");
                     }
@@ -103,16 +137,66 @@ public class Cliente extends Usuario {
         }
     }
 
-    public void visualizarPerfilDoPrestador() {
+    public void visualizarPerfilDoPrestador(Prestador prestador) {
+        System.out.println();
+        System.out.println(prestador.getNome());
+        System.out.println("------------------------------------");
+        System.out.println("CPF/CNPJ: " + prestador.getCnpj());
+        System.out.println("Formações: " + prestador.getFormacoes());
+        System.out.println("Serviços:");
 
+        var servicosPrestador = prestador.getServicos();
+        if (!servicosPrestador.isEmpty()) {
+            for (Servico servico: servicosPrestador) {
+                servico.exibirDetalhes();
+            }
+
+            System.out.println();
+        } else {
+            System.out.println("Este prestador não cadastrou nenhum serviço por enquanto!");
+        }
     }
 
-    public void pesquisarServicos() {
+    public void pesquisarServicos(List<Servico> servicos) {
+        Scanner entradaTexto = new Scanner(System.in); // possibilita a entrada com informações de texto solicitadas
+        String texto; // armazena a informação de texto solicitada recentemente
 
+        System.out.println();
+        System.out.print("Sua busca: ");
+        texto = entradaTexto.nextLine();
+
+        System.out.println();
+        System.out.println("Resultados da busca: " + texto);
+        System.out.println("------------------------------------");
+        List<Servico> resultadosPesquisa = super.pesquisarServicosPorTitulo(servicos, texto);
+        if (!resultadosPesquisa.isEmpty()) {
+            super.visualizarServicos(resultadosPesquisa);
+        } else {
+            System.out.println("Nenhum serviço encontrado para esta busca!");
+        }
     }
 
-    public void solicitarServico() {
+    public void solicitarServico(List<Servico> servicos) {
+        Scanner entradaId = new Scanner(System.in); // possibilita a entrada do usuário com algum id de serviço
+        int id; // armazena o id do serviço inserida pelo usuário recentemente
 
+        System.out.println();
+        System.out.print("Insira o id do serviço: ");
+        id = entradaId.nextInt();
+
+        Servico servico = super.consultarServicoPorId(servicos, id);
+        if (servico != null) {
+            // cadastra uma proposta para o serviço solicitado indiretamente
+            Proposta propostaServico = new Proposta();
+            propostaServico.setCliente(this);
+            propostaServico.setTitulo("Proposta para " + servico.getPrestador().getNome());
+            propostaServico.setTipo("Proposta indireta (" + servico.getTipo() + ")");
+            propostaServico.setDescricao("Olá, gostaria de solicitar o serviço " + servico.getTitulo());
+
+            servico.receberProposta(propostaServico);
+        } else {
+            System.out.println("[ERRO] O id informado não corresponde a um serviço cadastrado!");
+        }
     }
 
     public void confirmarServico() {
@@ -139,9 +223,7 @@ public class Cliente extends Usuario {
 
         boolean servicosVisualizados = false; // verifica se o usuário decidiu fechar o menu de visualização de serviços
         Scanner entradaOpcao = new Scanner(System.in); // possibilita a entrada do usuário com alguma das opções
-        Scanner entradaTexto = new Scanner(System.in); // possibilita a entrada com informações de texto solicitadas
         int opcao; // armazena a opção inserida pelo usuário recentemente
-        String texto; // armazena a informação de texto solicitada recentemente
 
         while (!servicosVisualizados) {
             System.out.println();
@@ -154,34 +236,62 @@ public class Cliente extends Usuario {
 
             switch (opcao) {
                 case 1:
-                    System.out.println();
-                    System.out.print("Insira o id do serviço: ");
-                    opcao = entradaOpcao.nextInt();
-
-                    Servico servico = super.consultarServicoPorId(servicos, opcao);
-                    if (servico != null) {
-                        System.out.println("Serviço solicitado com sucesso! Aguarde o retorno do Prestador");
-                    } else {
-                        System.out.println("[ERRO] O id informado não corresponde a um serviço cadastrado!");
-                    }
+                    solicitarServico(servicos);
                     break;
                 case 2:
-                    System.out.println();
-                    System.out.print("Sua busca: ");
-                    texto = entradaTexto.nextLine();
-
-                    System.out.println();
-                    System.out.println("Resultados da busca: " + texto);
-                    System.out.println("------------------------------------");
-                    List<Servico> resultadosPesquisa = super.pesquisarServicosPorTitulo(servicos, texto);
-                    if (!resultadosPesquisa.isEmpty()) {
-                        super.visualizarServicos(resultadosPesquisa);
-                    } else {
-                        System.out.println("Nenhum serviço encontrado para esta busca!");
-                    }
+                    pesquisarServicos(servicos);
                     break;
                 case 3:
                     servicosVisualizados = true;
+                    break;
+                default:
+                    System.out.println("[ERRO] Opção inválida, selecione uma das opções disponíveis!");
+                    System.out.println();
+                    break;
+            }
+        }
+    }
+
+    @Override
+    public void visualizarPropostas(List<Proposta> propostas) {
+        System.out.println();
+        System.out.println("Suas propostas cadastradas no aplicativo");
+        System.out.println("------------------------------------");
+
+        super.visualizarPropostas(getPropostas());
+
+        boolean propostasVisualizadas = false; // verifica se o usuário decidiu fechar o menu de visualização de propostas
+        Scanner entradaOpcao = new Scanner(System.in); // possibilita a entrada do usuário com alguma das opções
+        int opcao; // armazena a opção inserida pelo usuário recentemente
+
+        while (!propostasVisualizadas) {
+            System.out.println();
+            System.out.println("O que gostaria de fazer agora?");
+            System.out.println("1 - Remover proposta.");
+            System.out.println("2 - Acessar chat da proposta.");
+            System.out.println("3 - Voltar ao menu anterior.");
+            System.out.print("Sua opção: ");
+            opcao = entradaOpcao.nextInt();
+
+            switch (opcao) {
+                case 1:
+                    System.out.println();
+                    System.out.print("Insira o id da proposta: ");
+                    opcao = entradaOpcao.nextInt();
+
+                    Proposta proposta = super.consultarPropostaPorId(propostas, opcao);
+                    if (proposta != null) {
+                        getPropostas().remove(proposta);
+                        System.out.println("Proposta removida com sucesso!");
+                    } else {
+                        System.out.println("[ERRO] O id informado não corresponde a uma proposta cadastrado!");
+                    }
+                    break;
+                case 2:
+                    // acessar chat da proposta
+                    break;
+                case 3:
+                    propostasVisualizadas = true;
                     break;
                 default:
                     System.out.println("[ERRO] Opção inválida, selecione uma das opções disponíveis!");

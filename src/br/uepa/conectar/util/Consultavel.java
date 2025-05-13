@@ -1,6 +1,7 @@
 package br.uepa.conectar.util;
 
 import br.uepa.conectar.model.Prestador;
+import br.uepa.conectar.model.Proposta;
 import br.uepa.conectar.model.Servico;
 import br.uepa.conectar.model.Usuario;
 
@@ -49,6 +50,25 @@ public interface Consultavel {
         for (Usuario usuario: usuarios) {
             if (usuario.getNome().toLowerCase().contains(pesquisa.toLowerCase())) {
                 resultadosPesquisa.add((Prestador) usuario.getPerfis().get(1));
+            }
+        }
+        return resultadosPesquisa;
+    }
+
+    default Proposta consultarPropostaPorId(List<Proposta> propostas, int id) {
+        // percorre todas as propostas existentes e busca por uma com id correspondente
+        for (Proposta proposta: propostas) {
+            if (id == proposta.getId()) return proposta;
+        }
+        return null;
+    }
+
+    default List<Proposta> pesquisarPropostasPorTitulo(List<Proposta> propostas, String pesquisa) {
+        List<Proposta> resultadosPesquisa = new ArrayList<>();
+        // percorre todas as propostas e seleciona aquelas cujos titulos contém o trecho pesquisado
+        for (Proposta proposta : propostas) {
+            if (proposta.getTitulo().toLowerCase().contains(pesquisa.toLowerCase())) {
+                resultadosPesquisa.add(proposta);
             }
         }
         return resultadosPesquisa;
