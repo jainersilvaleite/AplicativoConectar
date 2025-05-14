@@ -1,5 +1,6 @@
 package br.uepa.conectar.models;
 
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Scanner;
@@ -118,8 +119,69 @@ public class Prestador extends Usuario {
 
     }
 
-    public void gerarOrdemDeServico() {
+    public OrdemDeServico gerarOrdemDeServico(Servico servico, Usuario perfilSelecionado, Cliente cliente, Proposta proposta) {
+        OrdemDeServico ordemDeServico = new OrdemDeServico();
+        // se o chat está ligado a uma proposta de um serviço já cadastrado
+        // o sistema gerará a ordem de serviço automaticamente
+        if (servico != null) {
+            ordemDeServico.setId(servico.getId());
+            ordemDeServico.setServico(servico);
+            ordemDeServico.setCliente(cliente);
+            ordemDeServico.setDataCriacao(LocalDate.now());
+            ordemDeServico.setStatus("Gerada");
 
+            System.out.println("Ordem de serviço gerada com sucesso!");
+        } else {
+            // do contrário, o prestador terá que preencher as informações do serviço
+            boolean informacoesPreenchidas = false; // verifica se as informações do serviço foram preenchidas
+            Scanner entradaInformacao = new Scanner(System.in); // armazena a entrada de informação do serviço
+            String informacao; // preenchimento da informação do serviço
+            double precoServico; // preenchimento do preço do serviço para cadastro
+            Servico novoServico = new Servico(); // instância do serviço a ser cadastrada
+
+            while (!informacoesPreenchidas) {
+                System.out.println();
+                System.out.println("Preencha os dados do serviço:");
+                System.out.println("------------------------------------");
+
+                try {
+                    System.out.println();
+                    System.out.print("Título do serviço: ");
+                    informacao = entradaInformacao.nextLine(); // preenchimento do titulo do serviço
+                    novoServico.setTitulo(informacao);
+
+                    System.out.print("Tipo do serviço: ");
+                    informacao = entradaInformacao.nextLine(); // preenchimento do tipo do serviço
+                    novoServico.setTipo(informacao);
+
+                    System.out.print("Descrição do serviço: ");
+                    informacao = entradaInformacao.nextLine(); // preenchimento da descrição do serviço
+                    novoServico.setDescricao(informacao);
+
+                    System.out.print("Preço do serviço: ");
+                    precoServico = entradaInformacao.nextDouble(); // preenchimento do preço do serviço
+                    novoServico.setPreco(precoServico);
+
+                    System.out.println("Ordem de serviço gerada com sucesso!");
+                    System.out.println();
+
+                    novoServico.setPrestador((Prestador) perfilSelecionado); // define o prestador
+
+                    ordemDeServico.setId(proposta.getId());
+                    ordemDeServico.setServico(novoServico);
+                    ordemDeServico.setCliente(cliente);
+                    ordemDeServico.setDataCriacao(LocalDate.now());
+                    ordemDeServico.setStatus("Gerada");
+                    informacoesPreenchidas = true;
+                } catch (Exception e) {
+                    System.out.println("[ERRO] Ocorreu um erro ao gerar ordem de serviço: " + e.getMessage());
+                    System.out.println("Reiniciando o preenchimento de dados...");
+                    System.out.println();
+                }
+            }
+        }
+
+        return ordemDeServico;
     }
 
     @Override

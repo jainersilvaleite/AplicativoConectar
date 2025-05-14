@@ -133,6 +133,8 @@ public class Main {
                         System.out.println("5 - Visualizar minhas propostas.");
                         System.out.println("6 - Encerrar sessão.");
                         System.out.println("7 - Encerrar aplicativo.");
+                        System.out.println("8 - Visualizar ordens de serviço.");
+                        System.out.println("9 - Visualizar meus chats.");
                         System.out.print("Sua opção: ");
                         opcao = entradaOpcao.nextInt();
 
@@ -203,6 +205,119 @@ public class Main {
                                 aplicativoAtivo = false;
                                 telaPrincipalAtiva = true;
                                 break;
+                            // caso o usuário queira visualizar as ordens de serviço
+                            case 8:
+                                System.out.println(perfilSelecionado.getNome() + ": Ordens de Serviço");
+                                System.out.println("------------------------------------");
+
+                                for (OrdemDeServico ordemDeServico: ordensDeServico) {
+                                    if (ordemDeServico.getCliente().getId() == perfilSelecionado.getId()) {
+                                        System.out.println("-> Id: " + ordemDeServico.getId());
+                                        System.out.println("Serviço: " + ordemDeServico.getServico().getTitulo());
+                                        System.out.println("Prestador: " + ordemDeServico.getServico().getPrestador().getNome());
+                                        System.out.println("Cliente: " + ordemDeServico.getCliente().getNome());
+                                        System.out.println("Status: " + ordemDeServico.getStatus());
+                                        System.out.println();
+                                    }
+                                }
+
+                                boolean ordensVisualizadas = false; // verifica se as ordens de serviço foram visualizadas
+                                OrdemDeServico ordemDeServico = null; // ordem de serviço selecionada
+
+                                while (!ordensVisualizadas) {
+                                    System.out.println("------------------------------------");
+                                    System.out.println("O que gostaria de fazer agora?");
+                                    System.out.println("1 - Cancelar serviço.");
+                                    System.out.println("2 - Confirmar serviço.");
+                                    System.out.println("3 - Voltar ao menu anterior.");
+                                    System.out.print("Sua opção: ");
+                                    opcao = entradaOpcao.nextInt();
+
+                                    switch (opcao) {
+                                        case 1:
+                                            System.out.println();
+                                            System.out.print("Insira o id da ordem de serviço: ");
+                                            opcao = entradaOpcao.nextInt();
+
+                                            ordemDeServico = ordemDeServico.consultarOrdemDeServicoPorId(ordensDeServico, opcao);
+                                            if (ordemDeServico != null) {
+                                                // cancelar serviço
+                                            } else {
+                                                System.out.println("[ERRO] O id informado não corresponde a uma ordem de serviço cadastrada!");
+                                            }
+                                            break;
+                                        case 2:
+                                            System.out.println();
+                                            System.out.print("Insira o id da ordem de serviço: ");
+                                            opcao = entradaOpcao.nextInt();
+
+                                            ordemDeServico = ordemDeServico.consultarOrdemDeServicoPorId(ordensDeServico, opcao);
+                                            if (ordemDeServico != null) {
+                                                // confirmar serviço
+                                            } else {
+                                                System.out.println("[ERRO] O id informado não corresponde a uma ordem de serviço cadastrada!");
+                                            }
+                                            break;
+                                        case 3:
+                                            ordensVisualizadas = true;
+                                            break;
+                                        default:
+                                            break;
+                                    }
+                                }
+
+                                break;
+                            // caso o usuário queira visualizar seus chats
+                            case 9:
+                                System.out.println(perfilSelecionado.getNome() + ": Chats");
+                                System.out.println("------------------------------------");
+
+                                for (Chat chat: chats) {
+                                    if (chat.getCliente().getId() == perfilSelecionado.getId()) {
+                                        System.out.println("-> Id: " + chat.getId() + " | " + chat.getPrestador().getNome());
+                                        System.out.println("Mensagens: " + (chat.getMensagens().size() + 1));
+                                        System.out.println();
+                                    }
+                                }
+
+                                boolean chatsVisualizados = false; // verifica se os chats foram visualizados
+
+                                while (!chatsVisualizados) {
+                                    System.out.println("------------------------------------");
+                                    System.out.println("O que gostaria de fazer agora?");
+                                    System.out.println("1 - Acessar um chat.");
+                                    System.out.println("2 - Voltar ao menu anterior.");
+                                    System.out.print("Sua opção: ");
+                                    opcao = entradaOpcao.nextInt();
+
+                                    switch (opcao) {
+                                        case 1:
+                                            System.out.println();
+                                            System.out.print("Insira o id do chat: ");
+                                            opcao = entradaOpcao.nextInt();
+
+                                            // se o cliente acessou o chat de alguma proposta
+                                            Chat chat = perfilSelecionado.consultarChatPorId(chats, opcao);
+
+                                            if (chat != null) {
+                                                // proposta associada ao chat
+                                                Proposta proposta = perfilSelecionado.consultarPropostaPorChat(chat);
+                                                chat.visualizarMensagens(null, proposta, perfilSelecionado);
+                                            } else {
+                                                // caso o chat não exista, avisar para o cliente aguardar um Prestador entrar em contato
+                                                System.out.println("[ERRO] O Chat para esta proposta ainda não foi iniciado!");
+                                                System.out.println("Aguarde até que um Prestador o atenda.");
+                                            }
+
+                                            break;
+                                        case 2:
+                                            chatsVisualizados = true;
+                                            break;
+                                        default:
+                                            break;
+                                    }
+                                }
+                                break;
                             default:
                                 System.out.println("[ERRO] Opção inválida, selecione uma das opções disponíveis!");
                                 System.out.println();
@@ -227,6 +342,7 @@ public class Main {
                         System.out.println("4 - Visualizar meus serviços.");
                         System.out.println("5 - Encerrar sessão.");
                         System.out.println("6 - Encerrar aplicativo.");
+                        System.out.println("7 - Visualizar ordens de serviço.");
                         System.out.print("Sua opção: ");
                         opcao = entradaOpcao.nextInt();
 
@@ -248,11 +364,13 @@ public class Main {
                                     Chat chat = perfilSelecionado.consultarChatPorId(chats, idChat);
                                     // proposta associada ao chat
                                     Proposta proposta = perfilSelecionado.consultarPropostaPorId(propostas, idChat);
+                                    // ordem de serviço
+                                    OrdemDeServico ordemDeServico;
 
                                     // caso o chat já exista, acessá-lo e visualizar suas mensagens
                                     if (chat != null) {
                                         // visualização das mensagens e coleta da ordem de serviço possivelmente gerada
-                                        OrdemDeServico ordemDeServico = chat.visualizarMensagens(null, proposta, perfilSelecionado);
+                                        ordemDeServico = chat.visualizarMensagens(null, proposta, perfilSelecionado);
 
                                         // se uma ordem de serviço for gerada
                                         if (ordemDeServico != null) {
@@ -263,7 +381,13 @@ public class Main {
                                         // caso o chat não exista, criá-lo
                                         Chat novoChat = proposta.iniciarChat((Prestador) perfilSelecionado); // chat entre cliente e prestador
                                         chats.add(novoChat); // adiciona o novo chat ao banco de dados
-                                        novoChat.visualizarMensagens(null, proposta, perfilSelecionado); // visualiza as mensagens do chat criado
+                                        ordemDeServico = novoChat.visualizarMensagens(null, proposta, perfilSelecionado); // visualiza as mensagens do chat criado
+
+                                        // se uma ordem de serviço for gerada
+                                        if (ordemDeServico != null) {
+                                            // adicionar a ordem de serviço no banco de dados
+                                            ordensDeServico.add(ordemDeServico);
+                                        }
                                     }
                                 }
                                 break;
@@ -299,6 +423,55 @@ public class Main {
                                 System.out.println("Obrigado por utilizar nosso aplicativo! Encerrando...");
                                 aplicativoAtivo = false;
                                 telaPrincipalAtiva = true;
+                                break;
+                            case 7:
+                                System.out.println(perfilSelecionado.getNome() + ": Ordens de Serviço");
+                                System.out.println("------------------------------------");
+
+                                for (OrdemDeServico ordemDeServico: ordensDeServico) {
+                                    if (ordemDeServico.getServico().getPrestador().getId() == perfilSelecionado.getId()) {
+                                        System.out.println("-> Id: " + ordemDeServico.getId());
+                                        System.out.println("Serviço: " + ordemDeServico.getServico().getTitulo());
+                                        System.out.println("Prestador: " + ordemDeServico.getServico().getPrestador().getNome());
+                                        System.out.println("Cliente: " + ordemDeServico.getCliente().getNome());
+                                        System.out.println("Status: " + ordemDeServico.getStatus());
+                                        System.out.println();
+                                    }
+                                }
+
+                                boolean ordensVisualizadas = false; // verifica se as ordens de serviço foram visualizadas
+                                OrdemDeServico ordemDeServico = null; // ordem de serviço selecionada
+
+                                while (!ordensVisualizadas) {
+                                    System.out.println("------------------------------------");
+                                    System.out.println("O que gostaria de fazer agora?");
+                                    System.out.println("1 - Atualizar status do serviço.");
+                                    System.out.println("2 - Voltar ao menu anterior.");
+                                    System.out.print("Sua opção: ");
+                                    opcao = entradaOpcao.nextInt();
+
+                                    switch (opcao) {
+                                        case 1:
+                                            System.out.println();
+                                            System.out.print("Insira o id da ordem de serviço: ");
+                                            opcao = entradaOpcao.nextInt();
+
+                                            ordemDeServico = ordemDeServico.consultarOrdemDeServicoPorId(ordensDeServico, opcao);
+                                            if (ordemDeServico != null) {
+                                                // atualizar ordem de serviço
+                                            } else {
+                                                System.out.println("[ERRO] O id informado não corresponde a uma ordem de serviço cadastrada!");
+                                            }
+                                            break;
+                                        case 2:
+                                            ordensVisualizadas = true;
+                                            break;
+                                        default:
+                                            System.out.println("[ERRO] Opção inválida, selecione uma das opções disponíveis!");
+                                            System.out.println();
+                                            break;
+                                    }
+                                }
                                 break;
                             default:
                                 System.out.println("[ERRO] Opção inválida, selecione uma das opções disponíveis!");

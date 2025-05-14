@@ -1,8 +1,10 @@
 package br.uepa.conectar.models;
 
+import br.uepa.conectar.utils.Consultavel;
+
 import java.time.LocalDate;
 
-public class OrdemDeServico {
+public class OrdemDeServico implements Consultavel {
     private int id;
     private Servico servico;
     private Cliente cliente;

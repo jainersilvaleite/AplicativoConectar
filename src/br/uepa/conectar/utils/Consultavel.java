@@ -60,6 +60,19 @@ public interface Consultavel {
         return null;
     }
 
+    default Proposta consultarPropostaPorChat(Chat chat) {
+        // percorre todos os serviços de um prestador e suas propostas e busca pelo chat correspondente ao informado
+        for (Servico servico: chat.getPrestador().getServicos()) {
+            for (Proposta proposta: servico.getPropostas()) {
+                if (proposta.getId() == chat.getId()
+                        && proposta.getCliente().getId() == chat.getCliente().getId()) {
+                    return proposta;
+                }
+            }
+        }
+        return null;
+    }
+
     default List<Proposta> pesquisarPropostasPorTitulo(List<Proposta> propostas, String pesquisa) {
         List<Proposta> resultadosPesquisa = new ArrayList<>();
         // percorre todas as propostas e seleciona aquelas cujos titulos contém o trecho pesquisado
@@ -86,6 +99,14 @@ public interface Consultavel {
         // percorre todos os chats existentes e busca por um com id correspondente
         for (Chat chat: chats) {
             if (id == chat.getId()) return chat;
+        }
+        return null;
+    }
+
+    default OrdemDeServico consultarOrdemDeServicoPorId(List<OrdemDeServico> ordensDeServicos, int id) {
+        // percorre todos as ordens de serviço existentes e busca por uma com id correspondente
+        for (OrdemDeServico ordemDeServico: ordensDeServicos) {
+            if (id == ordemDeServico.getId()) return ordemDeServico;
         }
         return null;
     }

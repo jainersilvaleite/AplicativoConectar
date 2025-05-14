@@ -11,6 +11,11 @@ public class Proposta implements Consultavel {
     private Boolean aceiteCliente;
     private Boolean aceitePrestador;
 
+    public Proposta() {
+        this.aceiteCliente = false;
+        this.aceitePrestador = false;
+    }
+
     public int getId() {
         return id;
     }

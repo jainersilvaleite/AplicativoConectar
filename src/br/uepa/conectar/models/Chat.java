@@ -115,30 +115,33 @@ public class Chat {
                     enviarMensagem(perfilSelecionado, texto);
                     break;
                 case 2:
-                    // aceitar proposta
+                    if (perfilSelecionado instanceof Cliente) {
+                        proposta.setAceiteCliente(true);
+                    } else {
+                        proposta.setAceitePrestador(true);
+                    }
+
+                    System.out.println();
                     break;
                 case 3:
                     mensagensVisualizadas = true;
                     break;
                 case 4:
                     if (perfilSelecionado instanceof Prestador) {
-                        // instância da ordem de serviço
-                        ordemDeServico = new OrdemDeServico();
-
-                        // se o chat está ligado a uma proposta de um serviço já cadastrado
-                        // o sistema gerará a ordem de serviço automaticamente
-                        if (servico != null) {
-                            ordemDeServico.setId(servico.getId());
-                            ordemDeServico.setServico(servico);
-                            ordemDeServico.setCliente(getCliente());
-                            ordemDeServico.setDataCriacao(LocalDate.now());
-                            ordemDeServico.setStatus("Gerada");
+                        // a ordem de serviço só será gerada se o ambos concordarem
+                        if (proposta.getAceiteCliente() && proposta.getAceitePrestador()) {
+                            // preenchimento da ordem de serviço a ser gerada
+                            ordemDeServico = ((Prestador) perfilSelecionado).gerarOrdemDeServico(servico, perfilSelecionado, getCliente(), proposta);
                         } else {
-                            // do contrário, o prestador terá que preencher as informações do serviço
+                            System.out.println("[ERRO] A ordem de serviço só pode ser gerada com a aceitação de ambas as partes!");
+                            System.out.println();
+                            break;
                         }
                     }
                     break;
                 default:
+                    System.out.println("[ERRO] Opção inválida, selecione uma das opções disponíveis!");
+                    System.out.println();
                     break;
             }
         }
