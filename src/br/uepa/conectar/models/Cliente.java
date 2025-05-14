@@ -220,7 +220,7 @@ public class Cliente extends Usuario {
     @Override
     public void exibirDetalhes() {
         super.exibirDetalhes();
-        System.out.println("CPF: " + getCpf());
+        System.out.println("CPF/CNPJ: " + getCpf());
     }
 
     @Override

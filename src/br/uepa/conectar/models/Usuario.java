@@ -200,7 +200,7 @@ public class Usuario implements Consultavel {
 
                     // caso não possua cpf
                     System.out.println();
-                    System.out.print("Para prosseguir, insira seu CPF: ");
+                    System.out.print("Para prosseguir, insira seu CPF/CNPJ: ");
                     texto = entradaTexto.nextLine();
 
                     cliente.setCpf(texto);
