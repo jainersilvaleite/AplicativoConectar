@@ -180,12 +180,12 @@ public class Prestador extends Usuario {
 
                             // caso o chat já exista, acessá-lo e visualizar suas mensagens
                             if (chat != null) {
-                                chat.visualizarMensagens(proposta, this);
+                                chat.visualizarMensagens(servico, proposta, this);
                             } else {
                                 // caso o chat não exista, criá-lo
                                 Chat novoChat = proposta.iniciarChat(this); // chat entre cliente e prestador
                                 chats.add(novoChat); // adiciona o novo chat ao banco de dados
-                                novoChat.visualizarMensagens(proposta, this); // visualiza as mensagens do chat criado
+                                novoChat.visualizarMensagens(servico, proposta, this); // visualiza as mensagens do chat criado
                             }
                         }
                     } else {

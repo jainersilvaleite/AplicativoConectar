@@ -182,7 +182,7 @@ public class Main {
 
                                     // caso o chat já exista, acessá-lo e visualizar suas mensagens
                                     if (chat != null) {
-                                        chat.visualizarMensagens(proposta, perfilSelecionado);
+                                        chat.visualizarMensagens(null, proposta, perfilSelecionado);
                                     } else {
                                         // caso o chat não exista, avisar para o cliente aguardar um Prestador entrar em contato
                                         System.out.println("[ERRO] O Chat para esta proposta ainda não foi iniciado!");
@@ -251,12 +251,19 @@ public class Main {
 
                                     // caso o chat já exista, acessá-lo e visualizar suas mensagens
                                     if (chat != null) {
-                                        chat.visualizarMensagens(proposta, perfilSelecionado);
+                                        // visualização das mensagens e coleta da ordem de serviço possivelmente gerada
+                                        OrdemDeServico ordemDeServico = chat.visualizarMensagens(null, proposta, perfilSelecionado);
+
+                                        // se uma ordem de serviço for gerada
+                                        if (ordemDeServico != null) {
+                                            // adicionar a ordem de serviço no banco de dados
+                                            ordensDeServico.add(ordemDeServico);
+                                        }
                                     } else {
                                         // caso o chat não exista, criá-lo
                                         Chat novoChat = proposta.iniciarChat((Prestador) perfilSelecionado); // chat entre cliente e prestador
                                         chats.add(novoChat); // adiciona o novo chat ao banco de dados
-                                        novoChat.visualizarMensagens(proposta, perfilSelecionado); // visualiza as mensagens do chat criado
+                                        novoChat.visualizarMensagens(null, proposta, perfilSelecionado); // visualiza as mensagens do chat criado
                                     }
                                 }
                                 break;

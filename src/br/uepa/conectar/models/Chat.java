@@ -53,12 +53,21 @@ public class Chat {
         getMensagens().add(novaMensagem);
     }
 
-    public void visualizarMensagens(Proposta proposta, Usuario perfilSelecionado) {
+    public OrdemDeServico visualizarMensagens(Servico servico, Proposta proposta, Usuario perfilSelecionado) {
         boolean mensagensVisualizadas = false; // verifica se o usuário saiu do chat
         Scanner entradaOpcao = new Scanner(System.in); // possibilita a entrada do usuário com alguma das opções
         Scanner entradaTexto = new Scanner(System.in); // possibilita a entrada com informações de texto solicitadas
         int opcao; // armazena a opção inserida pelo usuário recentemente
         String texto; // armazena a informação de texto solicitada recentemente
+        OrdemDeServico ordemDeServico = null; // ordem de serviço a ser gerada
+
+        // nome do chat de acordo com o perfil selecionado atualmente
+        if (perfilSelecionado instanceof Prestador) {
+            System.out.println("Chat: " + getCliente().getNome());
+        } else {
+            System.out.println("Chat: " + getPrestador().getNome());
+        }
+        System.out.println("------------------------------------");
 
         while (!mensagensVisualizadas) {
             if (!getMensagens().isEmpty()) {
@@ -111,10 +120,30 @@ public class Chat {
                 case 3:
                     mensagensVisualizadas = true;
                     break;
+                case 4:
+                    if (perfilSelecionado instanceof Prestador) {
+                        // instância da ordem de serviço
+                        ordemDeServico = new OrdemDeServico();
+
+                        // se o chat está ligado a uma proposta de um serviço já cadastrado
+                        // o sistema gerará a ordem de serviço automaticamente
+                        if (servico != null) {
+                            ordemDeServico.setId(servico.getId());
+                            ordemDeServico.setServico(servico);
+                            ordemDeServico.setCliente(getCliente());
+                            ordemDeServico.setDataCriacao(LocalDate.now());
+                            ordemDeServico.setStatus("Gerada");
+                        } else {
+                            // do contrário, o prestador terá que preencher as informações do serviço
+                        }
+                    }
+                    break;
                 default:
                     break;
             }
         }
+
+        return ordemDeServico;
     }
 
     public void fechar() {
