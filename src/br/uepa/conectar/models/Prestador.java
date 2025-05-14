@@ -172,13 +172,11 @@ public class Prestador extends Usuario {
 
                     servico = super.consultarServicoPorId(servicos, opcao);
                     if (servico != null) {
-                        int idChat = servico.visualizarPropostas();
+                        Proposta proposta = servico.visualizarPropostas();
 
                         // se o prestador acessou o chat de alguma proposta
-                        if (idChat != -1) {
-                            Chat chat = consultarChatPorId(chats, idChat);
-                            // proposta associada ao chat
-                            Proposta proposta = consultarPropostaPorId(propostas, idChat);
+                        if (proposta != null) {
+                            Chat chat = consultarChatPorId(chats, proposta.getId());
 
                             // caso o chat já exista, acessá-lo e visualizar suas mensagens
                             if (chat != null) {

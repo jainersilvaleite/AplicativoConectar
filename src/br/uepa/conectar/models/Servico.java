@@ -90,7 +90,7 @@ public class Servico implements Consultavel {
 
     }
 
-    public int visualizarPropostas() {
+    public Proposta visualizarPropostas() {
         Scanner entradaTexto = new Scanner(System.in); // possibilita a entrada com informações de texto solicitadas
         String texto; // armazena a informação de texto solicitada recentemente
         Proposta proposta = new Proposta(); // armazena a proposta em foco
@@ -165,10 +165,8 @@ public class Servico implements Consultavel {
             }
         }
 
-        // retorno do id do chat (-1 se não foi selecionado nenhum)
-        if (proposta != null) {
-            return proposta.getId();
-        } else return -1;
+        // retorno a proposta em que o chat será aberto
+        return proposta;
     }
 
     public void exibirDetalhes() {

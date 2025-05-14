@@ -194,7 +194,7 @@ public class Cliente extends Usuario {
             propostaServico.setDescricao("Olá, gostaria de solicitar o serviço " + servico.getTitulo());
 
             // sistema de geração de ids para propostas indiretas
-            int idProposta = servico.getPropostas().size() + 1; // id da proposta de acordo com a quantidade existente
+            int idProposta = servico.getPropostas().size() + 1000; // id da proposta de acordo com a quantidade existente
             // o sistema tenta utilizar o idProposta inicial, mas se não conseguir, gera um novo id até que seja possível
             while (super.consultarPropostaPorId(servico.getPropostas(), idProposta) != null) {
                 idProposta++;
